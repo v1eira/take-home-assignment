@@ -1,0 +1,10 @@
+
+node_modules
+dist
+coverage
+
+.eslintrc.json
+jest.config.js
+package-lock.json
+package.json
+tsconfig.json
