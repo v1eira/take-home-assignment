@@ -1,7 +1,8 @@
 import type AccountRepositoryInterface from '../../../../domain/account/account-repository.interface'
 import { type TransferInputDto, type TransferOutputDto } from './transfer.dto'
+import { type TransferUsecaseInterface } from './transfer.usecase.interface'
 
-export default class TransferUsecase {
+export default class TransferUsecase implements TransferUsecaseInterface {
   constructor (private readonly accountRepository: AccountRepositoryInterface) {}
 
   async execute (input: TransferInputDto): Promise<TransferOutputDto> {
