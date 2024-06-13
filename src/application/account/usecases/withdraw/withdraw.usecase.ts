@@ -1,7 +1,8 @@
 import type AccountRepositoryInterface from '../../../../domain/account/account-repository.interface'
 import { type WithdrawInputDto, type WithdrawOutputDto } from './withdraw.dto'
+import { type WithdrawUsecaseInterface } from './withdraw.usecase.interface'
 
-export default class WithdrawUsecase {
+export default class WithdrawUsecase implements WithdrawUsecaseInterface {
   constructor (private readonly accountRepository: AccountRepositoryInterface) {}
 
   async execute (input: WithdrawInputDto): Promise<WithdrawOutputDto> {
