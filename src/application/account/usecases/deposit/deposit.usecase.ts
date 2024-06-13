@@ -1,8 +1,9 @@
 import Account from '../../../../domain/account/account'
 import type AccountRepositoryInterface from '../../../../domain/account/account-repository.interface'
 import { type DepositInputDto, type DepositOutputDto } from './deposit.dto'
+import { type DepositUsecaseInterface } from './deposit.usecase.interface'
 
-export default class DepositUsecase {
+export default class DepositUsecase implements DepositUsecaseInterface {
   constructor (private readonly accountRepository: AccountRepositoryInterface) {}
 
   async execute (input: DepositInputDto): Promise<DepositOutputDto> {
