@@ -358,19 +358,6 @@ describe('Account controller tests', () => {
         await expect(accountController.handleEvent(input)).rejects.toThrow(new NotFoundError('Origin account not found'))
       })
 
-      it('Should throw an error if destination account not found', async () => {
-        const input = {
-          type: 'transfer',
-          data: {
-            origin: '100',
-            destination: '200',
-            amount: 10
-          }
-        }
-        jest.spyOn(transferUsecase, 'execute').mockImplementationOnce(() => { throw new NotFoundError('Destination account not found') })
-        await expect(accountController.handleEvent(input)).rejects.toThrow(new NotFoundError('Destination account not found'))
-      })
-
       it('Should throw an error if origin and destination accounts are the same', async () => {
         const input = {
           type: 'transfer',

@@ -1,3 +1,4 @@
+import Account from '../../../../domain/account/account'
 import type AccountRepositoryInterface from '../../../../domain/account/account-repository.interface'
 import InvalidParamError from '../../../../domain/errors/invalid-param.error'
 import NotFoundError from '../../../../domain/errors/not-found.error'
@@ -15,7 +16,7 @@ export default class TransferUsecase implements TransferUsecaseInterface {
       throw new InvalidParamError('Origin and destination must be different')
     }
 
-    const [originAccount, destinationAccount] = await Promise.all([
+    let [originAccount, destinationAccount] = await Promise.all([
       this.accountRepository.get(input.origin),
       this.accountRepository.get(input.destination)
     ])
@@ -23,7 +24,7 @@ export default class TransferUsecase implements TransferUsecaseInterface {
       throw new NotFoundError('Origin account not found')
     }
     if (destinationAccount === null) {
-      throw new NotFoundError('Destination account not found')
+      destinationAccount = new Account(input.destination, 0)
     }
 
     originAccount.withdraw(input.amount)

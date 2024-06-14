@@ -37,6 +37,28 @@ describe('Transfer usecase tests', () => {
     })
   })
 
+  it('Should create account with transfer amount if destination account not found', async () => {
+    const input = {
+      origin: '100',
+      destination: '300',
+      amount: 15
+    }
+    accountRepository.get
+      .mockReturnValueOnce(new Account('100', 15))
+      .mockReturnValueOnce(null)
+    const output = await usecase.execute(input)
+    expect(output).toEqual({
+      origin: {
+        id: '100',
+        balance: 0
+      },
+      destination: {
+        id: '300',
+        balance: 15
+      }
+    })
+  })
+
   it('Should throw an error if amount is zero', async () => {
     const input = {
       origin: '100',
@@ -75,18 +97,6 @@ describe('Transfer usecase tests', () => {
     }
     accountRepository.get.mockReturnValueOnce(null)
     await expect(usecase.execute(input)).rejects.toThrow(new NotFoundError('Origin account not found'))
-  })
-
-  it('Should throw an error if destination account not found', async () => {
-    const input = {
-      origin: '100',
-      destination: '300',
-      amount: 15
-    }
-    accountRepository.get
-      .mockReturnValueOnce(new Account('100', 15))
-      .mockReturnValueOnce(null)
-    await expect(usecase.execute(input)).rejects.toThrow(new NotFoundError('Destination account not found'))
   })
 
   it('Should throw an error if origin account has insufficient funds', async () => {
