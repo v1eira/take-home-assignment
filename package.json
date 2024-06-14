@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "npx tsx watch src/infrastructure/api/server.ts",
-    "dev": "tsc --watch",
+    "start:prod": "node dist/infrastructure/api/server.js",
+    "build": "tsc",
     "lint:fix": "eslint --fix --ext .js,.mjs,.ts,.json .",
     "test": "jest --coverageReporters='text-summary'"
   },
