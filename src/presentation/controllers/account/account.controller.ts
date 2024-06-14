@@ -51,7 +51,7 @@ export default class AccountController {
   }
 
   async getBalance (id: string): Promise<number> {
-    const balance = await this.getBalanceUsecase.execute({ accountId: id })
+    const balance = await this.getBalanceUsecase.execute({ accountId: this.validateAndReturnStringParam(id, 'Account Id') })
     return balance.balance
   }
 
