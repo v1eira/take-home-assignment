@@ -3,6 +3,9 @@ import { type GetBalanceUsecaseInterface } from '../../../application/account/us
 import { type TransferUsecaseInterface } from '../../../application/account/usecases/transfer/transfer.usecase.interface'
 import { type WithdrawUsecaseInterface } from '../../../application/account/usecases/withdraw/withdraw.usecase.interface'
 import Account from '../../../domain/account/account'
+import InvalidParamError from '../../../domain/errors/invalid-param.error'
+import NotFoundError from '../../../domain/errors/not-found.error'
+import TransactionError from '../../../domain/errors/transaction.error'
 import AccountController from './account.controller'
 
 describe('Account controller tests', () => {
@@ -45,7 +48,7 @@ describe('Account controller tests', () => {
 
     it('Should throw an error if account not found', async () => {
       const id = '100'
-      jest.spyOn(getBalanceUsecase, 'execute').mockImplementationOnce(() => { throw new Error('Account not found') })
+      jest.spyOn(getBalanceUsecase, 'execute').mockImplementationOnce(() => { throw new NotFoundError('Account not found') })
       await expect(accountController.getBalance(id)).rejects.toThrow()
     })
   })
@@ -110,7 +113,7 @@ describe('Account controller tests', () => {
           }
         }
 
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Destination is required')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Destination is required'))
 
         const input2 = {
           type: 'deposit',
@@ -119,7 +122,7 @@ describe('Account controller tests', () => {
           }
         }
 
-        await expect(accountController.handleEvent(input2)).rejects.toThrow('Destination is required')
+        await expect(accountController.handleEvent(input2)).rejects.toThrow(new InvalidParamError('Destination is required'))
       })
 
       it('Should throw an error if amount is <= 0', async () => {
@@ -131,12 +134,12 @@ describe('Account controller tests', () => {
           }
         }
 
-        jest.spyOn(depositUsecase, 'execute').mockImplementation(() => { throw new Error('Amount must be greater than zero') })
+        jest.spyOn(depositUsecase, 'execute').mockImplementation(() => { throw new InvalidParamError('Amount must be greater than zero') })
 
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Amount must be greater than zero')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Amount must be greater than zero'))
 
         input.data.amount = -10
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Amount must be greater than zero')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Amount must be greater than zero'))
         expect(depositUsecase.execute).toHaveBeenCalledTimes(2)
       })
     })
@@ -176,7 +179,7 @@ describe('Account controller tests', () => {
           }
         }
 
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Origin is required')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Origin is required'))
 
         const input2 = {
           type: 'withdraw',
@@ -185,7 +188,7 @@ describe('Account controller tests', () => {
           }
         }
 
-        await expect(accountController.handleEvent(input2)).rejects.toThrow('Origin is required')
+        await expect(accountController.handleEvent(input2)).rejects.toThrow(new InvalidParamError('Origin is required'))
       })
 
       it('Should throw an error if amount is <= 0', async () => {
@@ -197,12 +200,12 @@ describe('Account controller tests', () => {
           }
         }
 
-        jest.spyOn(withdrawUsecase, 'execute').mockImplementation(() => { throw new Error('Amount must be greater than zero') })
+        jest.spyOn(withdrawUsecase, 'execute').mockImplementation(() => { throw new InvalidParamError('Amount must be greater than zero') })
 
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Amount must be greater than zero')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Amount must be greater than zero'))
 
         input.data.amount = -10
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Amount must be greater than zero')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Amount must be greater than zero'))
         expect(withdrawUsecase.execute).toHaveBeenCalledTimes(2)
       })
 
@@ -214,8 +217,8 @@ describe('Account controller tests', () => {
             amount: 10
           }
         }
-        jest.spyOn(withdrawUsecase, 'execute').mockImplementationOnce(() => { throw new Error('Origin account not found') })
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Origin account not found')
+        jest.spyOn(withdrawUsecase, 'execute').mockImplementationOnce(() => { throw new NotFoundError('Origin account not found') })
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new NotFoundError('Origin account not found'))
       })
 
       it('Should throw an error if origin account has insufficient balance', async () => {
@@ -231,7 +234,7 @@ describe('Account controller tests', () => {
           account.withdraw(input.data.amount)
           return await Promise.resolve({ id: account.getId(), balance: account.getBalance() })
         })
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Insufficient funds')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new TransactionError('Insufficient funds'))
       })
     })
 
@@ -287,7 +290,7 @@ describe('Account controller tests', () => {
           }
         }
 
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Origin is required')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Origin is required'))
 
         const input2 = {
           type: 'transfer',
@@ -297,7 +300,7 @@ describe('Account controller tests', () => {
           }
         }
 
-        await expect(accountController.handleEvent(input2)).rejects.toThrow('Origin is required')
+        await expect(accountController.handleEvent(input2)).rejects.toThrow(new InvalidParamError('Origin is required'))
       })
 
       it('Should throw an error if destination is empty', async () => {
@@ -310,7 +313,7 @@ describe('Account controller tests', () => {
           }
         }
 
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Destination is required')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Destination is required'))
 
         const input2 = {
           type: 'transfer',
@@ -320,7 +323,7 @@ describe('Account controller tests', () => {
           }
         }
 
-        await expect(accountController.handleEvent(input2)).rejects.toThrow('Destination is required')
+        await expect(accountController.handleEvent(input2)).rejects.toThrow(new InvalidParamError('Destination is required'))
       })
 
       it('Should throw an error if amount is <= 0', async () => {
@@ -333,12 +336,12 @@ describe('Account controller tests', () => {
           }
         }
 
-        jest.spyOn(transferUsecase, 'execute').mockImplementation(() => { throw new Error('Amount must be greater than zero') })
+        jest.spyOn(transferUsecase, 'execute').mockImplementation(() => { throw new InvalidParamError('Amount must be greater than zero') })
 
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Amount must be greater than zero')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Amount must be greater than zero'))
 
         input.data.amount = -10
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Amount must be greater than zero')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Amount must be greater than zero'))
         expect(transferUsecase.execute).toHaveBeenCalledTimes(2)
       })
 
@@ -351,8 +354,8 @@ describe('Account controller tests', () => {
             amount: 10
           }
         }
-        jest.spyOn(transferUsecase, 'execute').mockImplementationOnce(() => { throw new Error('Origin account not found') })
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Origin account not found')
+        jest.spyOn(transferUsecase, 'execute').mockImplementationOnce(() => { throw new NotFoundError('Origin account not found') })
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new NotFoundError('Origin account not found'))
       })
 
       it('Should throw an error if destination account not found', async () => {
@@ -364,8 +367,8 @@ describe('Account controller tests', () => {
             amount: 10
           }
         }
-        jest.spyOn(transferUsecase, 'execute').mockImplementationOnce(() => { throw new Error('Destination account not found') })
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Destination account not found')
+        jest.spyOn(transferUsecase, 'execute').mockImplementationOnce(() => { throw new NotFoundError('Destination account not found') })
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new NotFoundError('Destination account not found'))
       })
 
       it('Should throw an error if origin and destination accounts are the same', async () => {
@@ -377,8 +380,8 @@ describe('Account controller tests', () => {
             amount: 10
           }
         }
-        jest.spyOn(transferUsecase, 'execute').mockImplementationOnce(() => { throw new Error('Origin and destination must be different') })
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Origin and destination must be different')
+        jest.spyOn(transferUsecase, 'execute').mockImplementationOnce(() => { throw new InvalidParamError('Origin and destination must be different') })
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Origin and destination must be different'))
       })
 
       it('Should throw an error if origin account has insufficient balance', async () => {
@@ -395,7 +398,7 @@ describe('Account controller tests', () => {
           origin.withdraw(input.data.amount)
           return {} as any
         })
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Insufficient funds')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new TransactionError('Insufficient funds'))
       })
     })
 
@@ -409,7 +412,7 @@ describe('Account controller tests', () => {
             amount: 10
           }
         }
-        await expect(accountController.handleEvent(input)).rejects.toThrow('Invalid event type')
+        await expect(accountController.handleEvent(input)).rejects.toThrow(new InvalidParamError('Invalid event type'))
       })
     })
   })

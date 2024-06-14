@@ -1,4 +1,5 @@
 import Account from '../../../../domain/account/account'
+import InvalidParamError from '../../../../domain/errors/invalid-param.error'
 import DepositUsecase from './deposit.usecase'
 
 describe('Deposit usecase tests', () => {
@@ -43,7 +44,7 @@ describe('Deposit usecase tests', () => {
       destination: '100',
       amount: 0
     }
-    await expect(usecase.execute(input)).rejects.toThrow('Amount must be greater than zero')
+    await expect(usecase.execute(input)).rejects.toThrow(new InvalidParamError('Amount must be greater than zero'))
   })
 
   it('Should throw an error if amount is less than zero', async () => {
@@ -51,6 +52,6 @@ describe('Deposit usecase tests', () => {
       destination: '100',
       amount: -10
     }
-    await expect(usecase.execute(input)).rejects.toThrow('Amount must be greater than zero')
+    await expect(usecase.execute(input)).rejects.toThrow(new InvalidParamError('Amount must be greater than zero'))
   })
 })

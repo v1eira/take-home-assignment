@@ -1,4 +1,6 @@
 import type AccountRepositoryInterface from '../../../../domain/account/account-repository.interface'
+import InvalidParamError from '../../../../domain/errors/invalid-param.error'
+import NotFoundError from '../../../../domain/errors/not-found.error'
 import { type TransferInputDto, type TransferOutputDto } from './transfer.dto'
 import { type TransferUsecaseInterface } from './transfer.usecase.interface'
 
@@ -7,10 +9,10 @@ export default class TransferUsecase implements TransferUsecaseInterface {
 
   async execute (input: TransferInputDto): Promise<TransferOutputDto> {
     if (input.amount <= 0) {
-      throw new Error('Amount must be greater than zero')
+      throw new InvalidParamError('Amount must be greater than zero')
     }
     if (input.origin === input.destination) {
-      throw new Error('Origin and destination must be different')
+      throw new InvalidParamError('Origin and destination must be different')
     }
 
     const [originAccount, destinationAccount] = await Promise.all([
@@ -18,10 +20,10 @@ export default class TransferUsecase implements TransferUsecaseInterface {
       this.accountRepository.get(input.destination)
     ])
     if (originAccount === null) {
-      throw new Error('Origin account not found')
+      throw new NotFoundError('Origin account not found')
     }
     if (destinationAccount === null) {
-      throw new Error('Destination account not found')
+      throw new NotFoundError('Destination account not found')
     }
 
     originAccount.withdraw(input.amount)

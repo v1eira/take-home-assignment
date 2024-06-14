@@ -1,4 +1,7 @@
 import Account from '../../../../domain/account/account'
+import InvalidParamError from '../../../../domain/errors/invalid-param.error'
+import NotFoundError from '../../../../domain/errors/not-found.error'
+import TransactionError from '../../../../domain/errors/transaction.error'
 import WithdrawUsecase from './withdraw.usecase'
 
 describe('Withdraw usecase tests', () => {
@@ -31,7 +34,7 @@ describe('Withdraw usecase tests', () => {
       amount: 10
     }
     accountRepository.get.mockReturnValueOnce(null)
-    await expect(usecase.execute(input)).rejects.toThrow('Account not found')
+    await expect(usecase.execute(input)).rejects.toThrow(new NotFoundError('Account not found'))
   })
 
   it('Should throw an error if amount is greater than balance', async () => {
@@ -40,7 +43,7 @@ describe('Withdraw usecase tests', () => {
       amount: 30
     }
     accountRepository.get.mockReturnValueOnce(new Account('100', 20))
-    await expect(usecase.execute(input)).rejects.toThrow('Insufficient funds')
+    await expect(usecase.execute(input)).rejects.toThrow(new TransactionError('Insufficient funds'))
   })
 
   it('Should throw an error if amount is zero', async () => {
@@ -49,7 +52,7 @@ describe('Withdraw usecase tests', () => {
       amount: 0
     }
     accountRepository.get.mockReturnValueOnce(new Account('100', 20))
-    await expect(usecase.execute(input)).rejects.toThrow('Amount must be greater than zero')
+    await expect(usecase.execute(input)).rejects.toThrow(new InvalidParamError('Amount must be greater than zero'))
   })
 
   it('Should throw an error if amount is less than zero', async () => {
@@ -58,6 +61,6 @@ describe('Withdraw usecase tests', () => {
       amount: -10
     }
     accountRepository.get.mockReturnValueOnce(new Account('100', 20))
-    await expect(usecase.execute(input)).rejects.toThrow('Amount must be greater than zero')
+    await expect(usecase.execute(input)).rejects.toThrow(new InvalidParamError('Amount must be greater than zero'))
   })
 })

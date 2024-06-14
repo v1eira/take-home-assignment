@@ -1,4 +1,5 @@
 import Account from '../../../../domain/account/account'
+import NotFoundError from '../../../../domain/errors/not-found.error'
 import GetBalanceUsecase from './get-balance.usecase'
 
 describe('Get balance usecase tests', () => {
@@ -28,6 +29,6 @@ describe('Get balance usecase tests', () => {
       accountId: '100'
     }
     accountRepository.get.mockReturnValueOnce(null)
-    await expect(usecase.execute(input)).rejects.toThrow('Account not found')
+    await expect(usecase.execute(input)).rejects.toThrow(new NotFoundError('Account not found'))
   })
 })

@@ -2,6 +2,7 @@ import { type DepositUsecaseInterface } from '../../../application/account/useca
 import { type GetBalanceUsecaseInterface } from '../../../application/account/usecases/get-balance/get-balance.usecase.interface'
 import { type TransferUsecaseInterface } from '../../../application/account/usecases/transfer/transfer.usecase.interface'
 import { type WithdrawUsecaseInterface } from '../../../application/account/usecases/withdraw/withdraw.usecase.interface'
+import InvalidParamError from '../../../domain/errors/invalid-param.error'
 import { type EventInputDto, type DepositOutputDto, type WithdrawOutputDto, type TransferOutputDto, type DepositInputDto, type WithdrawInputDto, type TransferInputDto } from './account.controller.dto'
 
 export default class AccountController {
@@ -46,7 +47,7 @@ export default class AccountController {
           amount: event.data.amount
         })
       default:
-        throw new Error('Invalid event type')
+        throw new InvalidParamError('Invalid event type')
     }
   }
 
@@ -91,7 +92,7 @@ export default class AccountController {
 
   private validateAndReturnStringParam (param: string | undefined, name: string): string {
     if (typeof param !== 'string' || param.length === 0) {
-      throw new Error(`${name} is required`)
+      throw new InvalidParamError(`${name} is required`)
     }
     return param
   }

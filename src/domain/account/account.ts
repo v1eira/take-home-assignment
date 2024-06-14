@@ -1,3 +1,6 @@
+import InvalidParamError from '../errors/invalid-param.error'
+import TransactionError from '../errors/transaction.error'
+
 export default class Account {
   private readonly id: string
   private balance: number
@@ -17,17 +20,17 @@ export default class Account {
 
   public deposit (amount: number): void {
     if (amount <= 0) {
-      throw new Error('Amount must be greater than zero')
+      throw new InvalidParamError('Amount must be greater than zero')
     }
     this.balance += amount
   }
 
   public withdraw (amount: number): void {
     if (amount <= 0) {
-      throw new Error('Amount must be greater than zero')
+      throw new InvalidParamError('Amount must be greater than zero')
     }
     if (this.balance < amount) {
-      throw new Error('Insufficient funds')
+      throw new TransactionError('Insufficient funds')
     }
     this.balance -= amount
   }

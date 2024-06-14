@@ -1,3 +1,5 @@
+import InvalidParamError from '../errors/invalid-param.error'
+import TransactionError from '../errors/transaction.error'
 import Account from './account'
 
 describe('Account tests', () => {
@@ -21,18 +23,18 @@ describe('Account tests', () => {
 
   it('Should throw an error when depositing amount <= 0', () => {
     const account = new Account('1', 0)
-    expect(() => { account.deposit(-100) }).toThrow('Amount must be greater than zero')
-    expect(() => { account.deposit(0) }).toThrow('Amount must be greater than zero')
+    expect(() => { account.deposit(-100) }).toThrow(new InvalidParamError('Amount must be greater than zero'))
+    expect(() => { account.deposit(0) }).toThrow(new InvalidParamError('Amount must be greater than zero'))
   })
 
   it('Should throw an error when withdrawing amount <= 0', () => {
     const account = new Account('1', 100)
-    expect(() => { account.withdraw(-50) }).toThrow('Amount must be greater than zero')
-    expect(() => { account.withdraw(0) }).toThrow('Amount must be greater than zero')
+    expect(() => { account.withdraw(-50) }).toThrow(new InvalidParamError('Amount must be greater than zero'))
+    expect(() => { account.withdraw(0) }).toThrow(new InvalidParamError('Amount must be greater than zero'))
   })
 
   it('Should throw an error when withdrawing more than the balance', () => {
     const account = new Account('1', 100)
-    expect(() => { account.withdraw(200) }).toThrow('Insufficient funds')
+    expect(() => { account.withdraw(200) }).toThrow(new TransactionError('Insufficient funds'))
   })
 })
